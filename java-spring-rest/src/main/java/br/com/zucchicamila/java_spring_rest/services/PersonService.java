@@ -3,6 +3,8 @@ package br.com.zucchicamila.java_spring_rest.services;
 import br.com.zucchicamila.java_spring_rest.models.Person;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
@@ -31,5 +33,31 @@ public class PersonService {
         person.setGender("Female");
         return person;
     }
+
+    public List<Person> findAll() {
+        logger.info("Finding all...");
+        // Declaramos uma listagem de pessoas:
+        List<Person> persons = new ArrayList<>();
+        // Iteramos em um array que vai de zero à oito:
+        for (int i = 0; i < 8; i++) {
+            // Mocka uma pessoa para cada item dessa lista:
+            Person person = mockPerson(i);
+            // Adiciona essa pessoa na nossa lista:
+            persons.add(person);
+        }
+        return persons;
+    }
+
+    private Person mockPerson(int i) {
+        Person person = new Person();
+        // Simula o ID da pessoa:
+        person.setId(counter.incrementAndGet());
+        person.setFirstName("Person name " + i);
+        person.setLastName("Last name: " + i);
+        person.setAddress("Some address in Brasil: " + i);
+        person.setGender("Female");
+        return person;
+    }
+
 
 }
