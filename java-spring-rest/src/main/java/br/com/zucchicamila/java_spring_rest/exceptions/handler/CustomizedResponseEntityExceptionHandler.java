@@ -1,7 +1,7 @@
 package br.com.zucchicamila.java_spring_rest.exceptions.handler;
 
 import br.com.zucchicamila.java_spring_rest.exceptions.ExceptionResponse;
-import br.com.zucchicamila.java_spring_rest.exceptions.UnsupportedMathOperationException;
+import br.com.zucchicamila.java_spring_rest.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,11 +25,11 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     }
 
     // Trata exceções do tipo BADREQUEST:
-    @ExceptionHandler(UnsupportedMathOperationException.class)
-    public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception exception, WebRequest request) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public final ResponseEntity<ExceptionResponse> handleNotFoundExceptions(Exception exception, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
                 request.getDescription(false));
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
 }
