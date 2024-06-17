@@ -1,1 +1,9 @@
-spring.application.name=java-spring-rest
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/java-spring-rest
+    username: postgres
+    password: dago
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
