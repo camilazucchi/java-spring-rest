@@ -1,6 +1,10 @@
 package br.com.zucchicamila.java_spring_rest.services;
 
+import br.com.zucchicamila.java_spring_rest.data.vo.v1.PersonVO;
+import br.com.zucchicamila.java_spring_rest.data.vo.v2.PersonVOV2;
 import br.com.zucchicamila.java_spring_rest.exceptions.ResourceNotFoundException;
+import br.com.zucchicamila.java_spring_rest.mapper.MapperUtil;
+import br.com.zucchicamila.java_spring_rest.mapper.custom.PersonMapper;
 import br.com.zucchicamila.java_spring_rest.models.Person;
 import br.com.zucchicamila.java_spring_rest.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,40 +21,54 @@ public class PersonService {
      * a execução da aplicação, como mensagens de erro, avisos, informações e depuração. */
 
     private final PersonRepository repository;
+    private final PersonMapper mapper;
 
     @Autowired
-    public PersonService(PersonRepository repository) {
+    public PersonService(PersonRepository repository, PersonMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
-    public Person findById(Long id) {
+    public PersonVO findById(Long id) {
 
         logger.info("Finding one person...");
 
-        return repository.findById(id)
+        var entity = repository.findById(id)
                 .orElseThrow(() -> {
                     logger.warning("Person with ID " + id + " was not found.");
                     return new ResourceNotFoundException("Person with ID " + id + " was not found.");
                 });
+        return MapperUtil.parseObject(entity, PersonVO.class);
 
     }
 
-    public List<Person> findAll() {
+    public List<PersonVO> findAll() {
 
         logger.info("Finding all...");
 
-        return repository.findAll();
+        return MapperUtil.parseListObjects(repository.findAll(), PersonVO.class);
 
     }
 
-    public Person create(Person person) {
+    public PersonVO create(PersonVO person) {
 
         logger.info("Creating a person...");
-        return repository.save(person);
+
+        var entity = MapperUtil.parseObject(person, Person.class);
+        return MapperUtil.parseObject(repository.save(entity), PersonVO.class);
 
     }
 
-    public Person update(Person person) {
+    public PersonVOV2 createV2(PersonVOV2 person) {
+
+        logger.info("Creating a person with V2...");
+
+        var entity = mapper.convertVOToEntity(person);
+        return mapper.convertEntityToVO(repository.save(entity));
+
+    }
+
+    public PersonVO update(PersonVO person) {
 
         logger.info("Updating a person...");
 
@@ -65,7 +83,7 @@ public class PersonService {
         entity.setAddress(person.getAddress());
         entity.setGender(person.getGender());
 
-        return repository.save(person);
+        return MapperUtil.parseObject(repository.save(entity), PersonVO.class);
 
     }
 
