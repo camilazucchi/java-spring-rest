@@ -18,3 +18,12 @@ https://github.com/flyway/flyway/issues/3807
 ### Lembretes
 - O caminho para a pasta contendo migrations deve ser src - resources - db - migration.
 - Seguir o padrão de nomenclatura das migrations V#__Nome_Da_Migration.sql.
+## Content Negotiation
+A Content Negotiation (Negociação de Conteúdo) é uma técnica utilizada em sistemas baseados
+em HTTP (como API's RESTful) para determinar a melhor representação de um recurso a ser entregue
+ao cliente, com base em critérios como as preferências do cliente e as capacidades do servidor.
+No Spring Framework, a negociação de conteúdo é amplamente utilizada para servir diferentes formatos
+de resposta, como JSON, XML, HTML, entre outros.
+### Como funciona a Content Negotiation?
+No Spring MVC, a negociação de conteúdo é gerenciada por várias classes e interfaces, como
+"ContentNegotiationManager", "ContentNegotiationConfigurer" e "ContentNegotiationStrategy".
