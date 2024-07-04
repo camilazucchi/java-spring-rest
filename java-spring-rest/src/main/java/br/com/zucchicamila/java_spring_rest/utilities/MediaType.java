@@ -6,4 +6,8 @@ public class MediaType {
     public static final String APPLICATION_XML = "application/xml";
     public static final String APPLICATION_YAML = "application/x-yaml";
 
+    private MediaType() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
 }
