@@ -11,6 +11,7 @@ public class Person implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long personId;
 
     /* A anotação "@Column" para firstName e lastName são necessárias porque o nome da coluna é diferente do nome do

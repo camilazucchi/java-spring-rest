@@ -1,5 +1,6 @@
 package br.com.zucchicamila.java_spring_rest.mapper.custom;
 
+import br.com.zucchicamila.java_spring_rest.data.vo.v1.PersonVO;
 import br.com.zucchicamila.java_spring_rest.data.vo.v2.PersonVOV2;
 import br.com.zucchicamila.java_spring_rest.models.Person;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,16 @@ public class PersonMapper {
         vov2.setGender(person.getGender());
         vov2.setBirthDay(new Date());
         return vov2;
+    }
+
+    public Person convertVOToEntity(PersonVO personVO) {
+        Person person = new Person();
+        person.setPersonId(personVO.getPersonId());
+        person.setFirstName(personVO.getFirstName());
+        person.setLastName(personVO.getLastName());
+        person.setAddress(personVO.getAddress());
+        person.setGender(personVO.getGender());
+        return person;
     }
 
     // Este método converte um objeto "PersonVOV2" em uma entidade "Person":

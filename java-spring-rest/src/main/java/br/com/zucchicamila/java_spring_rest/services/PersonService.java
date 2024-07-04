@@ -1,5 +1,6 @@
 package br.com.zucchicamila.java_spring_rest.services;
 
+import br.com.zucchicamila.java_spring_rest.controllers.PersonController;
 import br.com.zucchicamila.java_spring_rest.data.vo.v1.PersonVO;
 import br.com.zucchicamila.java_spring_rest.data.vo.v2.PersonVOV2;
 import br.com.zucchicamila.java_spring_rest.exceptions.ResourceNotFoundException;
@@ -9,6 +10,9 @@ import br.com.zucchicamila.java_spring_rest.models.Person;
 import br.com.zucchicamila.java_spring_rest.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -33,12 +37,27 @@ public class PersonService {
 
         logger.info("Finding one person...");
 
-        var entity = repository.findById(id)
+        Person entity = repository.findById(id)
                 .orElseThrow(() -> {
                     logger.warning("Person with ID " + id + " was not found.");
                     return new ResourceNotFoundException("Person with ID " + id + " was not found.");
                 });
-        return MapperUtil.parseObject(entity, PersonVO.class);
+        // Convertemos a entidade para VO:
+        PersonVO entityVO = MapperUtil.parseObject(entity, PersonVO.class);
+        /* Essa linha de código é típica em um ambiente Spring Boot ao usar o Spring HATEOAS para adicionar links
+         * HATEOAS aos recursos de uma API REST.
+         * 1. "vo.add()": o método "add" é chamado para adicionar um link ao objeto "vo".
+         * 2. "linkTo()": é um método estático do Spring HATEOAS que ajuda a criar links. Esse método gera um link
+         * para o recurso com base nas informações fornecidas.
+         * 3. "methodOn(PersonController.class).findById(id)": "methodOn" é um método estático que simula a chamada
+         * ao método do controlador ("PersonController").
+         * "PersonController.class" especifica a classe do controlador que contém o método.
+         * "findById(id)" especifica o método dentro do controlador que estamos referenciando, passando "id" como
+         * argumento.
+         * "withSelfRel()": é um método que adiciona uma relação (rel) "self" ao link, indicando que o link se refere
+         * ao próprio recurso. Essa relação "self" é usada para denotar que o link aponta para o próprio recurso. */
+        entityVO.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
+        return entityVO;
 
     }
 
@@ -46,7 +65,9 @@ public class PersonService {
 
         logger.info("Finding all...");
 
-        return MapperUtil.parseListObjects(repository.findAll(), PersonVO.class);
+        List<PersonVO> personList = MapperUtil.parseListObjects(repository.findAll(), PersonVO.class);
+        personList.forEach(person -> person.add(linkTo(methodOn(PersonController.class).findById(person.getPersonId())).withSelfRel()));
+        return personList;
 
     }
 
@@ -54,8 +75,17 @@ public class PersonService {
 
         logger.info("Creating a person...");
 
-        var entity = MapperUtil.parseObject(person, Person.class);
-        return MapperUtil.parseObject(repository.save(entity), PersonVO.class);
+        // Converte PersonVO para Person
+        Person entity = MapperUtil.parseObject(person, Person.class);
+        // Salva a entidade no banco de dados para gerar o ID
+        entity = repository.save(entity);
+        // Converte Person para PersonVO
+        PersonVO entityVO = MapperUtil.parseObject(entity, PersonVO.class);
+        // Atribui o personId ao entityVO
+        entityVO.setPersonId(entity.getPersonId());
+        // Adiciona o link HATEOAS com o ID correto
+        entityVO.add(linkTo(methodOn(PersonController.class).findById(entityVO.getPersonId())).withSelfRel());
+        return entityVO;
 
     }
 
@@ -72,7 +102,7 @@ public class PersonService {
 
         logger.info("Updating a person...");
 
-        var entity = repository.findById(person.getPersonId())
+        Person entity = repository.findById(person.getPersonId())
                 .orElseThrow(() -> {
                     logger.warning("Person with ID " + person.getPersonId() + " was not found.");
                     return new ResourceNotFoundException("Person with ID " + person.getPersonId() + " was not found.");
@@ -83,7 +113,9 @@ public class PersonService {
         entity.setAddress(person.getAddress());
         entity.setGender(person.getGender());
 
-        return MapperUtil.parseObject(repository.save(entity), PersonVO.class);
+        PersonVO entityVO = MapperUtil.parseObject(entity, PersonVO.class);
+        entityVO.add(linkTo(methodOn(PersonController.class).findById(entityVO.getPersonId())).withSelfRel());
+        return entityVO;
 
     }
 
