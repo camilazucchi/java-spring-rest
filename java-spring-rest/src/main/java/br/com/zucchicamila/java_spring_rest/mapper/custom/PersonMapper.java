@@ -12,7 +12,7 @@ public class PersonMapper {
     // Este método converte uma entidade "Person" em um objeto "PersonVOV2":
     public PersonVOV2 convertEntityToVO(Person person) {
         PersonVOV2 vov2 = new PersonVOV2();
-        vov2.setId(person.getId());
+        vov2.setId(person.getPersonId());
         vov2.setFirstName(person.getFirstName());
         vov2.setLastName(person.getLastName());
         vov2.setAddress(person.getAddress());
@@ -24,7 +24,7 @@ public class PersonMapper {
     // Este método converte um objeto "PersonVOV2" em uma entidade "Person":
     public Person convertVOToEntity(PersonVOV2 personVOV2) {
         Person person = new Person();
-        person.setId(personVOV2.getId());
+        person.setPersonId(personVOV2.getId());
         person.setFirstName(personVOV2.getFirstName());
         person.setLastName(personVOV2.getLastName());
         person.setAddress(personVOV2.getAddress());

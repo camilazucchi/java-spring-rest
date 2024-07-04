@@ -72,10 +72,10 @@ public class PersonService {
 
         logger.info("Updating a person...");
 
-        var entity = repository.findById(person.getId())
+        var entity = repository.findById(person.getPersonId())
                 .orElseThrow(() -> {
-                    logger.warning("Person with ID " + person.getId() + " was not found.");
-                    return new ResourceNotFoundException("Person with ID " + person.getId() + " was not found.");
+                    logger.warning("Person with ID " + person.getPersonId() + " was not found.");
+                    return new ResourceNotFoundException("Person with ID " + person.getPersonId() + " was not found.");
                 });
 
         entity.setFirstName(person.getFirstName());
